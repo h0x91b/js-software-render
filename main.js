@@ -31,8 +31,8 @@ function line(x0, y0, x1, y1, image, color) {
 	
 	let dx = x1-x0
 	let dy = y1-y0
-	let derror = dy/dx
-	let error = 0
+	let derror2 = Math.abs(dy)*2
+	let error2 = 0
 	let y = y0
 	
 	for(let x=x0;x<x1;x++) {
@@ -40,10 +40,10 @@ function line(x0, y0, x1, y1, image, color) {
 			image.set(y, x, color)
 		else
 			image.set(x, y, color)
-		error += derror
-		if(error>.5) {
+		error2 += derror2
+		if(error2 > dx) {
 			y += y1 > y0 ? 1 : -1
-			error -= 1
+			error2 -= dx*2
 		}
 	}
 }
