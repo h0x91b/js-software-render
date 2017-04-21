@@ -8,6 +8,13 @@
 		}
 	}
 	
+	class Vec2i {
+		constructor(x=0, y=0) {
+			this.x = x|0
+			this.y = y|0
+		}
+	}
+	
 	class Model {
 		constructor(objFileContent) {
 			this.verts = []
@@ -53,4 +60,5 @@
 	
 	win.Model = Model
 	win.Vec3f = Vec3f
+	win.Vec2i = Vec2i
 })(window);

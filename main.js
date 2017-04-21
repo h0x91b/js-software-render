@@ -1,15 +1,36 @@
 "use strict"
 
+const width = 500, height = 500
+
 let white = new TGAColor(255, 255, 255, 255)
 let red = new TGAColor(255, 0, 0, 255)
-let model
+let green = new TGAColor(0, 255, 0, 255)
+let model, image
 
 main()
 
-async function main(african_head) {
-	let width = 500, height = 500
-	let image = new TGAImage(width, height, TGAImage.RGB)
+async function main() {
+	image = new TGAImage(width, height, TGAImage.RGB)
 	
+	// await drawModel()
+	drawTriangles()
+	
+	image.flip_vertically()
+	
+	console.log('finish')
+}
+
+function drawTriangles() {
+	let t0 = [new Vec2i(10, 70), new Vec2i(50, 160), new Vec2i(70, 80)]
+	let t1 = [new Vec2i(180, 50), new Vec2i(150, 1), new Vec2i(70, 180)]
+	let t2 = [new Vec2i(180, 150), new Vec2i(120, 160), new Vec2i(130, 180)]
+	
+	triangle(t0[0], t0[1], t0[2], image, red)
+	triangle(t1[0], t1[1], t1[2], image, white)
+	triangle(t2[0], t2[1], t2[2], image, green)
+}
+
+async function drawModel() {
 	let obj = await axios.get('obj/african_head.obj');
 	model = new Model(obj.data)
 	
@@ -27,10 +48,6 @@ async function main(african_head) {
 			line(x0, y0, x1, y1, image, white)
 		}
 	}
-	
-	image.flip_vertically()
-	
-	console.log('finish')
 }
 
 function line(x0, y0, x1, y1, image, color) {
@@ -61,4 +78,10 @@ function line(x0, y0, x1, y1, image, color) {
 			error2 -= dx*2
 		}
 	}
+}
+
+function triangle(t0, t1, t2, image, color) {
+	line(t0.x, t0.y, t1.x, t1.y, image, color)
+	line(t2.x, t2.y, t1.x, t1.y, image, color)
+	line(t0.x, t0.y, t2.x, t2.y, image, color)
 }
