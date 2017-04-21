@@ -25,7 +25,7 @@
 		
 		set(x, y, color) {
 			this._ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
-			this._ctx.fillRect(x, y, 1, 1)
+			this._ctx.fillRect(x|0, y|0, 1, 1)
 		}
 		
 		flip_vertically() {
