@@ -81,7 +81,33 @@ function line(x0, y0, x1, y1, image, color) {
 }
 
 function triangle(t0, t1, t2, image, color) {
-	line(t0.x, t0.y, t1.x, t1.y, image, color)
-	line(t2.x, t2.y, t1.x, t1.y, image, color)
-	line(t0.x, t0.y, t2.x, t2.y, image, color)
+	// line(t0.x, t0.y, t1.x, t1.y, image, color)
+	// line(t2.x, t2.y, t1.x, t1.y, image, color)
+	// line(t0.x, t0.y, t2.x, t2.y, image, color)
+	
+	const minX = Math.min(t0.x, t1.x, t2.x)
+	const maxX = Math.max(t0.x, t1.x, t2.x)
+	const minY = Math.min(t0.y, t1.y, t2.y)
+	const maxY = Math.max(t0.y, t1.y, t2.y)
+	
+	for(let x=minX;x<maxX;x++) {
+		for(let y=minY;y<maxY;y++) {
+			if(!isPointInsideOfTriangle(new Vec2i(x, y), t0, t1, t2)) continue
+			image.set(x, y, color)
+		}
+	}
+}
+
+function isPointInsideOfTriangle(targetPoint, p1, p2, p3) {
+	let b1, b2, b3
+	
+	b1 = sign(targetPoint, p1, p2) < 0.
+	b2 = sign(targetPoint, p2, p3) < 0.
+	b3 = sign(targetPoint, p3, p1) < 0.
+	
+	return ((b1 == b2) && (b2 == b3))
+	
+	function sign(p1, p2, p3) {
+		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y)
+	}
 }
