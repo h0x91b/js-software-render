@@ -28,12 +28,22 @@ function line(x0, y0, x1, y1, image, color) {
 	if(x0>x1) {
 		[x0, x1, y0, y1] = [x1, x0, y1, y0];
 	}
+	
+	let dx = x1-x0
+	let dy = y1-y0
+	let derror = dy/dx
+	let error = 0
+	let y = y0
+	
 	for(let x=x0;x<x1;x++) {
-		let t = (x-x0)/(x1-x0)
-		let y = (y0*(1-t) + y1*t)|0
 		if(steep)
 			image.set(y, x, color)
 		else
 			image.set(x, y, color)
+		error += derror
+		if(error>.5) {
+			y += y1 > y0 ? 1 : -1
+			error -= 1
+		}
 	}
 }
