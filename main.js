@@ -2,16 +2,31 @@
 
 let white = new TGAColor(255, 255, 255, 255)
 let red = new TGAColor(255, 0, 0, 255)
+let model
 
 main()
 
-function main() {
-	let image = new TGAImage(100, 100, TGAImage.RGB)
-	image.set(52, 41, red)
+async function main(african_head) {
+	let width = 500, height = 500
+	let image = new TGAImage(width, height, TGAImage.RGB)
 	
-	line(13, 20, 80, 40, image, white);
-	line(20, 13, 40, 80, image, red);
-	line(80, 40, 13, 20, image, red);
+	let obj = await axios.get('obj/african_head.obj');
+	model = new Model(obj.data)
+	
+	for(let i=0; i<model.nfaces(); i++) {
+		let face = model.face(i)
+		for(let j=0;j<3;j++) {
+			let v0 = model.vert(face[j])
+			let v1 = model.vert(face[(j+1)%3])
+			
+			let x0 = ((v0.x+1)*width/2)|0
+			let y0 = ((v0.y+1)*height/2)|0
+			let x1 = ((v1.x+1)*width/2)|0
+			let y1 = ((v1.y+1)*height/2)|0
+			
+			line(x0, y0, x1, y1, image, white)
+		}
+	}
 	
 	image.flip_vertically()
 	
