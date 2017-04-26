@@ -52,6 +52,7 @@ async function drawModel() {
 
 function line(v0, v1, image, color) {
 	if(arguments.length !== 4) throw new Error("Wrong arguments length")
+	if(!(v0 instanceof Vec2i && v1 instanceof Vec2i)) throw new Error('v0 or v1 is not instanceof Vec2i')
 	let [x0, y0, x1, y1] = [v0.x, v0.y, v1.x, v1.y]
 	let steep = false
 	
@@ -112,8 +113,15 @@ function triangle(t0, t1, t2, image, color) {
 		let beta = (y-t0.y)/segmentHeight
 		let A = new Vec2i(t0.x + (t2.x-t0.x) * alpha, t0.y + (t2.y-t0.y) * alpha)
 		let B = new Vec2i(t0.x + (t1.x-t0.x) * beta, t0.y + (t1.y-t0.y) * beta)
-		image.set(A.x, y, red)
-		image.set(B.x, y, green)
+		line(new Vec2i(A.x, y), new Vec2i(B.x, y), image, color)
+	}
+	for(let y=t1.y;y<t2.y;y++) {
+		let segmentHeight = t2.y - t1.y + 1
+		let alpha = (y-t0.y)/totalHeight
+		let beta = (y-t1.y)/segmentHeight
+		let A = new Vec2i(t0.x + (t2.x-t0.x) * alpha, t0.y + (t2.y-t0.y) * alpha)
+		let B = new Vec2i(t1.x + (t2.x-t1.x) * beta, t1.y + (t2.y-t1.y) * beta)
+		line(new Vec2i(A.x, y), new Vec2i(B.x, y), image, color)
 	}
 }
 
