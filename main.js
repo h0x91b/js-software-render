@@ -12,8 +12,8 @@ main()
 async function main() {
 	image = new TGAImage(width, height, TGAImage.RGB)
 	
-	// await drawModel()
-	drawTriangles()
+	await drawModel()
+	// drawTriangles()
 	
 	image.flip_vertically()
 	
@@ -36,17 +36,15 @@ async function drawModel() {
 	
 	for(let i=0; i<model.nfaces(); i++) {
 		let face = model.face(i)
+		let screenCoords = Array(3)
 		for(let j=0;j<3;j++) {
-			let v0 = model.vert(face[j])
-			let v1 = model.vert(face[(j+1)%3])
-			
-			let x0 = ((v0.x+1)*width/2)|0
-			let y0 = ((v0.y+1)*height/2)|0
-			let x1 = ((v1.x+1)*width/2)|0
-			let y1 = ((v1.y+1)*height/2)|0
-			
-			line(new Vec2i(x0, y0), new Vec2i(x1, y1), image, white)
+			let worldCoords = model.vert(face[j])
+			screenCoords[j] = new Vec2i(
+				(worldCoords.x+1)*width/2,
+				(worldCoords.y+1)*height/2,
+			)
 		}
+		triangle(screenCoords[0], screenCoords[1], screenCoords[2], image, new TGAColor(Math.random() * 255, Math.random() * 255, Math.random() * 255, 255))
 	}
 }
 
