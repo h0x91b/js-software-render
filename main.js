@@ -102,26 +102,20 @@ function triangleSimple(t0, t1, t2, image, color) {
 }
 
 function triangle(t0, t1, t2, image, color) {
+	if(t0.y==t1.y && t0.y == t2.y) return
 	if(t0.y>t1.y) [t0, t1] = [t1, t0];
 	if(t0.y>t2.y) [t0, t2] = [t2, t0];
 	if(t1.y>t2.y) [t1, t2] = [t2, t1];
 	
 	let totalHeight = t2.y - t0.y
-	for(let y=t0.y;y<=t1.y;y++) {
-		let segmentHeight = t1.y - t0.y + 1
-		let alpha = (y-t0.y)/totalHeight
-		let beta = (y-t0.y)/segmentHeight
+	for(let i=0;i<totalHeight;i++) {
+		const secondHalf = i>t1.y-t0.y || t1.y == t0.y
+		let segmentHeight = secondHalf ? t2.y - t1.y + 1 : t1.y - t0.y
+		let alpha = i/totalHeight
+		let beta = (i - (secondHalf ? t1.y - t0.y:0))/segmentHeight
 		let A = new Vec2i(t0.x + (t2.x-t0.x) * alpha, t0.y + (t2.y-t0.y) * alpha)
-		let B = new Vec2i(t0.x + (t1.x-t0.x) * beta, t0.y + (t1.y-t0.y) * beta)
-		line(new Vec2i(A.x, y), new Vec2i(B.x, y), image, color)
-	}
-	for(let y=t1.y;y<t2.y;y++) {
-		let segmentHeight = t2.y - t1.y + 1
-		let alpha = (y-t0.y)/totalHeight
-		let beta = (y-t1.y)/segmentHeight
-		let A = new Vec2i(t0.x + (t2.x-t0.x) * alpha, t0.y + (t2.y-t0.y) * alpha)
-		let B = new Vec2i(t1.x + (t2.x-t1.x) * beta, t1.y + (t2.y-t1.y) * beta)
-		line(new Vec2i(A.x, y), new Vec2i(B.x, y), image, color)
+		let B = secondHalf ? new Vec2i(t1.x + (t2.x-t1.x) * beta, t1.y + (t2.y-t1.y) * beta) : new Vec2i(t0.x + (t1.x-t0.x) * beta, t0.y + (t1.y-t0.y) * beta)
+		line(new Vec2i(A.x, t0.y + i), new Vec2i(B.x, t0.y + i), image, color)
 	}
 }
 
