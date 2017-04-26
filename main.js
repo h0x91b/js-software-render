@@ -45,12 +45,14 @@ async function drawModel() {
 			let x1 = ((v1.x+1)*width/2)|0
 			let y1 = ((v1.y+1)*height/2)|0
 			
-			line(x0, y0, x1, y1, image, white)
+			line(new Vec2i(x0, y0), new Vec2i(x1, y1), image, white)
 		}
 	}
 }
 
-function line(x0, y0, x1, y1, image, color) {
+function line(v0, v1, image, color) {
+	if(arguments.length !== 4) throw new Error("Wrong arguments length")
+	let [x0, y0, x1, y1] = [v0.x, v0.y, v1.x, v1.y]
 	let steep = false
 	
 	if(Math.abs(x0-x1) < Math.abs(y0-y1)) {
@@ -81,9 +83,9 @@ function line(x0, y0, x1, y1, image, color) {
 }
 
 function triangle(t0, t1, t2, image, color) {
-	// line(t0.x, t0.y, t1.x, t1.y, image, color)
-	// line(t2.x, t2.y, t1.x, t1.y, image, color)
-	// line(t0.x, t0.y, t2.x, t2.y, image, color)
+	// line(t0, t1, image, color)
+	// line(t2, t1, image, color)
+	// line(t0, t2, image, color)
 	
 	const minX = Math.min(t0.x, t1.x, t2.x)
 	const maxX = Math.max(t0.x, t1.x, t2.x)
