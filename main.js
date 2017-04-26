@@ -105,9 +105,16 @@ function triangle(t0, t1, t2, image, color) {
 	if(t0.y>t2.y) [t0, t2] = [t2, t0];
 	if(t1.y>t2.y) [t1, t2] = [t2, t1];
 	
-	line(t0, t1, image, green)
-	line(t1, t2, image, green)
-	line(t2, t0, image, red)
+	let totalHeight = t2.y - t0.y
+	for(let y=t0.y;y<=t1.y;y++) {
+		let segmentHeight = t1.y - t0.y + 1
+		let alpha = (y-t0.y)/totalHeight
+		let beta = (y-t0.y)/segmentHeight
+		let A = new Vec2i(t0.x + (t2.x-t0.x) * alpha, t0.y + (t2.y-t0.y) * alpha)
+		let B = new Vec2i(t0.x + (t1.x-t0.x) * beta, t0.y + (t1.y-t0.y) * beta)
+		image.set(A.x, y, red)
+		image.set(B.x, y, green)
+	}
 }
 
 function isPointInsideOfTriangle(targetPoint, p1, p2, p3) {
