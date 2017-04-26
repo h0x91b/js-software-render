@@ -82,7 +82,7 @@ function line(v0, v1, image, color) {
 	}
 }
 
-function triangle(t0, t1, t2, image, color) {
+function triangleSimple(t0, t1, t2, image, color) {
 	// line(t0, t1, image, color)
 	// line(t2, t1, image, color)
 	// line(t0, t2, image, color)
@@ -98,6 +98,16 @@ function triangle(t0, t1, t2, image, color) {
 			image.set(x, y, color)
 		}
 	}
+}
+
+function triangle(t0, t1, t2, image, color) {
+	if(t0.y>t1.y) [t0, t1] = [t1, t0];
+	if(t0.y>t2.y) [t0, t2] = [t2, t0];
+	if(t1.y>t2.y) [t1, t2] = [t2, t1];
+	
+	line(t0, t1, image, green)
+	line(t1, t2, image, green)
+	line(t2, t0, image, red)
 }
 
 function isPointInsideOfTriangle(targetPoint, p1, p2, p3) {
