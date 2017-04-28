@@ -29,7 +29,14 @@
 			if(f instanceof Vec3f) {
 				return this.x * f.x + this.y * f.y + this.z * f.z
 			}
-			return new Vec3f(this.x * f, this.y * f, this.z *f)
+			return new Vec3f(this.x * f, this.y * f, this.z * f)
+		}
+		
+		toI() {
+			this.x |= 0
+			this.y |= 0
+			this.z |= 0
+			return this
 		}
 		
 		xor(V) {

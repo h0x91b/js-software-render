@@ -64,10 +64,10 @@
 	
 	class TGAColor {
 		constructor(r, g, b, a) {
-			this.r = r|0
-			this.g = g|0
-			this.b = b|0
-			this.a = a|0
+			this.r = Math.min(Math.max(r|0, 0), 255)
+			this.g = Math.min(Math.max(g|0, 0), 255)
+			this.b = Math.min(Math.max(b|0, 0), 255)
+			this.a = Math.min(Math.max(a|0, 0), 255)
 		}
 	}
 	
