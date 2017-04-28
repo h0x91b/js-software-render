@@ -5,20 +5,70 @@ const width = 500, height = 500
 let white = new TGAColor(255, 255, 255, 255)
 let red = new TGAColor(255, 0, 0, 255)
 let green = new TGAColor(0, 255, 0, 255)
-let model, image
+let blue = new TGAColor(0, 0, 255, 255)
+let model, image, scene, render
 let lightDir = new Vec3f(0,0,-1);
 
 main()
 
-async function main() {
-	image = new TGAImage(width, height, TGAImage.RGB)
+function main() {
+	//Scene
+	scene = new TGAImage(width, height, TGAImage.RGB)
 	
-	await drawModel()
-	// drawTriangles()
+	line(new Vec2i(20, 34),   new Vec2i(744, 400), scene, red)
+	line(new Vec2i(120, 434), new Vec2i(444, 400), scene, green)
+	line(new Vec2i(330, 463), new Vec2i(594, 200), scene, blue)
+
+	// screen line
+	line(new Vec2i(10, 10), new Vec2i(790, 10), scene, white)
+
+	scene.flip_vertically();
 	
-	image.flip_vertically()
+	//Render
+	render = new TGAImage(width, 16, TGAImage.RGB)
+	let yBuffer = new Array(width)
+	for(let i=0;i<width;i++) {
+		yBuffer[i] = Number.MIN_VALUE
+	}
 	
-	console.log('finish')
+	rasterize(new Vec2i(20, 34),   new Vec2i(744, 400), render, red,   yBuffer)
+	rasterize(new Vec2i(120, 434), new Vec2i(444, 400), render, green, yBuffer)
+	rasterize(new Vec2i(330, 463), new Vec2i(594, 200), render, blue,  yBuffer)
+	
+	// 1-pixel wide image is bad for eyes, lets widen it
+	for (let i=0; i<width; i++) {
+		for (let j=1; j<16; j++) {
+			render.set(i, j, render.get(i, 0));
+		}
+	}
+	
+	render.flip_vertically()
+}
+
+// async function main() {
+// 	image = new TGAImage(width, height, TGAImage.RGB)
+//
+// 	await drawModel()
+// 	// drawTriangles()
+//
+// 	image.flip_vertically()
+//
+// 	console.log('finish')
+// }
+
+function rasterize(p0, p1, image, color, yBuffer) {
+	if(p0.x > p1.x) {
+		[p0, p1] = [p1, p0]
+	}
+	
+	for(let x=p0.x; x<=p1.x; x++) {
+		let t = (x-p0.x)/(p1.x-p0.x)
+		let y = (p0.y*(1.-t) + p1.y*t + .5)|0
+		if(yBuffer[x]<y) {
+			yBuffer[x] = y
+			image.set(x, 0, color)
+		}
+	}
 }
 
 function drawTriangles() {
