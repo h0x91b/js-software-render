@@ -28,6 +28,18 @@
 			this._ctx.fillRect(x|0, y|0, 1, 1)
 		}
 		
+		get(x, y) {
+			let imgData = this._ctx.getImageData(0, 0, this.width, this.height)
+			const bytesPerPixel = 4
+			const index = y * this.width * bytesPerPixel + x * bytesPerPixel
+			return new TGAColor(
+				imgData.data[index + 0],
+				imgData.data[index + 1],
+				imgData.data[index + 2],
+				imgData.data[index + 3]
+			)
+		}
+		
 		flip_vertically() {
 			let imgData = this._ctx.getImageData(0, 0, this.width, this.height)
 			const bytesPerPixel = 4
