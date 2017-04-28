@@ -6,6 +6,7 @@ let white = new TGAColor(255, 255, 255, 255)
 let red = new TGAColor(255, 0, 0, 255)
 let green = new TGAColor(0, 255, 0, 255)
 let model, image
+let lightDir = new Vec3f(0,0,-1);
 
 main()
 
@@ -37,14 +38,21 @@ async function drawModel() {
 	for(let i=0; i<model.nfaces(); i++) {
 		let face = model.face(i)
 		let screenCoords = Array(3)
+		let worldCoords = Array(3)
 		for(let j=0;j<3;j++) {
-			let worldCoords = model.vert(face[j])
+			let v = model.vert(face[j])
 			screenCoords[j] = new Vec2i(
-				(worldCoords.x+1)*width/2,
-				(worldCoords.y+1)*height/2,
+				(v.x+1)*width/2,
+				(v.y+1)*height/2,
 			)
+			worldCoords[j] = v
 		}
-		triangle(screenCoords[0], screenCoords[1], screenCoords[2], image, new TGAColor(Math.random() * 255, Math.random() * 255, Math.random() * 255, 255))
+		let n = new Vec3f(worldCoords[2].minus(worldCoords[0])).xor(worldCoords[1].minus(worldCoords[0]));
+		n.normalize()
+		let intensity = n.multiply(lightDir);
+		if (intensity>0) {
+			triangle(screenCoords[0], screenCoords[1], screenCoords[2], image, new TGAColor(intensity * 255, intensity * 255, intensity * 255, 255))
+		}
 	}
 }
 
