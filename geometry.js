@@ -2,9 +2,15 @@
 (function(win){
 	class Vec3f {
 		constructor(x=0., y=0., z=0.) {
-			this.x = x
-			this.y = y
-			this.z = z
+			if(x instanceof Vec3f) {
+				this.x = x.x
+				this.y = x.y
+				this.z = x.z
+			} else {
+				this.x = x
+				this.y = y
+				this.z = z
+			}
 		}
 		
 		plus(V) {
@@ -24,6 +30,16 @@
 				return this.x * f.x + this.y * f.y + this.z * f.z
 			}
 			return new Vec3f(this.x * f, this.y * f, this.z *f)
+		}
+		
+		xor(V) {
+			if(!(V instanceof Vec3f))
+				throw new Error('Argument must be an instance of Vec3f')
+			return new Vec3f(
+				this.y*V.z - this.z*V.y,
+				this.z*V.x - this.x*V.z,
+				this.x*V.y - this.y*V.x
+			)
 		}
 		
 		norm() {
