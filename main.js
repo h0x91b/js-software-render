@@ -104,7 +104,7 @@ async function drawModel() {
 		let screenCoords = Array(3)
 		let worldCoords = Array(3)
 		for(let j=0;j<3;j++) {
-			let v = model.vert(face[j])
+			let v = model.vert(face.verts[j])
 			screenCoords[j] = new Vec3f(
 				(v.x+1.)*width/2.,
 				(v.y+1.)*height/2.,

@@ -4,6 +4,8 @@
 		constructor(objFileContent) {
 			this.verts = []
 			this.faces = []
+			this.uvs = []
+			this.normals = []
 			
 			objFileContent.split('\n').forEach((line)=>{
 				if(line.indexOf('v ') === 0) {
@@ -21,7 +23,29 @@
 						parseInt(tmp[2].split('/')[0]) - 1,
 						parseInt(tmp[3].split('/')[0]) - 1
 					]
-					this.faces.push(face)
+					let uv = [
+						parseInt(tmp[1].split('/')[1]) - 1,
+						parseInt(tmp[2].split('/')[1]) - 1,
+						parseInt(tmp[3].split('/')[1]) - 1
+					]
+					let normal = [
+						parseInt(tmp[1].split('/')[2]) - 1,
+						parseInt(tmp[2].split('/')[2]) - 1,
+						parseInt(tmp[3].split('/')[2]) - 1
+					]
+					this.faces.push({
+						verts: face,
+						uvs: uv,
+						normals: normal
+					})
+				} else if(line.indexOf('vt  ') === 0) {
+					//texture coords
+					let tmp = line.split(' ')
+					this.uvs.push(new Vec2f(parseFloat(tmp[2]), parseFloat(tmp[3])))
+				} else if(line.indexOf('vn  ') === 0) {
+					//texture coords
+					let tmp = line.split(' ')
+					this.normals.push(new Vec2f(parseFloat(tmp[2]), parseFloat(tmp[3])))
 				}
 			})
 		}
