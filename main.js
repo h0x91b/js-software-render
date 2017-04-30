@@ -6,7 +6,7 @@ let white = new TGAColor(255, 255, 255, 255)
 let red = new TGAColor(255, 0, 0, 255)
 let green = new TGAColor(0, 255, 0, 255)
 let blue = new TGAColor(0, 0, 255, 255)
-let model, image, scene, render
+let model, image, scene, render, diffuse
 let lightDir = new Vec3f(0,0,-1)
 let zBuffer = new Array(width * height)
 
@@ -47,6 +47,11 @@ function main2() {
 }
 
 async function main() {
+	
+	diffuse = new TGAImage(width, height, TGAImage.RGB)
+	
+	await diffuse.loadImage('obj/african_head_diffuse.jpg')
+	
 	image = new TGAImage(width, height, TGAImage.RGB)
 
 	await drawModel()
@@ -62,7 +67,6 @@ async function main() {
 		}
 	}
 	render.flip_vertically()
-
 
 	console.log('finish')
 }

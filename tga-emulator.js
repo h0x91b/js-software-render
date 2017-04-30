@@ -60,6 +60,23 @@
 		static get RGB() {
 			return TGA_RGB
 		}
+		
+		async loadImage(src) {
+			console.log('loadImage', src)
+			return new Promise((resolve, reject)=>{
+				let img = new Image()
+				img.onload = () => {
+					console.log('image loaded')
+					this._ctx.drawImage(img, 0, 0, this.width, this.height)
+					resolve()
+				}
+				img.onerror = (err, ...args) => {
+					console.log('error on image load', err, args)
+					reject(err)
+				}
+				img.src = src
+			})
+		}
 	}
 	
 	class TGAColor {
