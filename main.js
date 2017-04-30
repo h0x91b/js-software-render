@@ -9,6 +9,7 @@ let blue = new TGAColor(0, 0, 255, 255)
 let model, image, scene, render, diffuse
 let lightDir = new Vec3f(0,0,-1)
 let zBuffer = new Array(width * height)
+const startExecution = +new Date
 
 main()
 
@@ -69,7 +70,7 @@ async function main() {
 	}
 	render.flip_vertically()
 
-	console.log('finish')
+	console.log('finish', ((+new Date) - startExecution))
 }
 
 function rasterize(p0, p1, image, color, yBuffer) {

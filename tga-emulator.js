@@ -38,15 +38,8 @@
 		
 		get(x, y) {
 			if(x > this.width || y > this.height) throw new Error('outbound')
-			let imgData = this._ctx.getImageData(0, 0, this.width, this.height)
-			const bytesPerPixel = 4
-			const index = (y|0) * this.width * bytesPerPixel + (x|0) * bytesPerPixel
-			return new TGAColor(
-				imgData.data[index + 0],
-				imgData.data[index + 1],
-				imgData.data[index + 2],
-				imgData.data[index + 3]
-			)
+			let imgData = this._ctx.getImageData(x, y, 1, 1);
+			return new TGAColor(imgData.data[0], imgData.data[1], imgData.data[2], imgData.data[3])
 		}
 		
 		flip_vertically() {
