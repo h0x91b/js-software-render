@@ -85,7 +85,31 @@
 			return new Vec2i(this.x * f, this.y * f)
 		}
 	}
+	
+	class Vec2f {
+		constructor(x=0., y=0.) {
+			this.x = x
+			this.y = y
+		}
+		
+		plus(V) {
+			if(!(V instanceof Vec2i))
+				throw new Error('Argument must be an instance of Vec2i')
+			return new Vec2f(this.x + V.x, this.y + V.y)
+		}
+		
+		minus(V) {
+			if(!(V instanceof Vec2i))
+				throw new Error('Argument must be an instance of Vec2i')
+			return new Vec2f(this.x - V.x, this.y - V.y)
+		}
+		
+		multiply(f) {
+			return new Vec2f(this.x * f, this.y * f)
+		}
+	}
 		
 	win.Vec3f = Vec3f
 	win.Vec2i = Vec2i
+	win.Vec2f = Vec2f
 })(window)
