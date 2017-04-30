@@ -53,6 +53,7 @@ async function main() {
 	
 	await diffuse.loadImage('obj/african_head_diffuse.jpg')
 	diffuse.flip_vertically()
+	diffuse._canvas.style.transform = 'scale(1, -1)'
 	
 	image = new TGAImage(width, height, TGAImage.RGB)
 
