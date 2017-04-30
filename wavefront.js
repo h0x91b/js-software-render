@@ -6,6 +6,7 @@
 			this.faces = []
 			this.uvs = []
 			this.normals = []
+			this.diffuseMap = null
 			
 			objFileContent.split('\n').forEach((line)=>{
 				if(line.indexOf('v ') === 0) {
@@ -50,6 +51,10 @@
 			})
 		}
 		
+		setDiffuseMap(map) {
+			this.diffuseMap = map
+		}
+		
 		nverts() {
 			return this.verts.length
 		}
@@ -64,6 +69,16 @@
 		
 		vert(index) {
 			return this.verts[index]
+		}
+		
+		uv(index, nVert) {
+			let idx = this.faces[index].uvs[nVert]
+			const difWidth = this.diffuseMap.width, difHeight = this.diffuseMap.height
+			return new Vec2i(this.uvs[idx].x * difWidth, this.uvs[idx].y * difHeight)
+		}
+		
+		diffuse(uv) {
+			return this.diffuseMap.get(uv.x, uv.y)
 		}
 	}
 	

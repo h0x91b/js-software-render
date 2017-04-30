@@ -107,6 +107,12 @@
 		multiply(f) {
 			return new Vec2f(this.x * f, this.y * f)
 		}
+		
+		toI() {
+			this.x |= 0
+			this.y |= 0
+			return this
+		}
 	}
 		
 	win.Vec3f = Vec3f

@@ -9,6 +9,7 @@
 			this._canvas = null
 			this._ctx = null
 			this._createCanvas()
+			this._pixel = this._ctx.createImageData(1,1)
 		}
 		
 		_createCanvas() {
@@ -24,14 +25,22 @@
 		}
 		
 		set(x, y, color) {
-			this._ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
-			this._ctx.fillRect(x|0, y|0, 1, 1)
+			// this._ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+			// this._ctx.fillRect(x|0, y|0, 1, 1)
+			
+			let d  = this._pixel.data;
+			d[0] = color.r;
+			d[1] = color.g;
+			d[2] = color.b;
+			d[3] = color.a;
+			this._ctx.putImageData( this._pixel, x, y );
 		}
 		
 		get(x, y) {
+			if(x > this.width || y > this.height) throw new Error('outbound')
 			let imgData = this._ctx.getImageData(0, 0, this.width, this.height)
 			const bytesPerPixel = 4
-			const index = y * this.width * bytesPerPixel + x * bytesPerPixel
+			const index = (y|0) * this.width * bytesPerPixel + (x|0) * bytesPerPixel
 			return new TGAColor(
 				imgData.data[index + 0],
 				imgData.data[index + 1],

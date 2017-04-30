@@ -51,10 +51,11 @@ async function main() {
 	diffuse = new TGAImage(width, height, TGAImage.RGB)
 	
 	await diffuse.loadImage('obj/african_head_diffuse.jpg')
+	diffuse.flip_vertically()
 	
 	image = new TGAImage(width, height, TGAImage.RGB)
 
-	await drawModel()
+	await drawModel(diffuse)
 	image.flip_vertically()
 	// drawTriangles()
 	
@@ -96,9 +97,10 @@ function drawTriangles() {
 	triangle(t2[0], t2[1], t2[2], image, green)
 }
 
-async function drawModel() {
+async function drawModel(diffuseMap) {
 	let obj = await axios.get('obj/african_head.obj');
 	model = new Model(obj.data)
+	model.setDiffuseMap(diffuseMap)
 	for(let i=0;i<width*height;i++) {
 		zBuffer[i] = Number.MIN_SAFE_INTEGER
 	}
@@ -120,12 +122,19 @@ async function drawModel() {
 		n.normalize()
 		let intensity = n.multiply(lightDir);
 		if (intensity>0) {
-			triangle(
+			let uv = Array(3)
+			for(let k=0;k<3;k++) {
+				uv[k] = model.uv(i, k)
+			}
+			await triangle(
 				screenCoords[0],
 				screenCoords[1],
 				screenCoords[2],
+				uv[0],
+				uv[1],
+				uv[2],
 				image,
-				new TGAColor(intensity * 255, intensity * 255, intensity * 255, 255),
+				intensity,
 				zBuffer
 			)
 		}
@@ -165,30 +174,12 @@ function line(v0, v1, image, color) {
 	}
 }
 
-function triangleSimple(t0, t1, t2, image, color) {
-	// line(t0, t1, image, color)
-	// line(t2, t1, image, color)
-	// line(t0, t2, image, color)
-	
-	const minX = Math.min(t0.x, t1.x, t2.x)
-	const maxX = Math.max(t0.x, t1.x, t2.x)
-	const minY = Math.min(t0.y, t1.y, t2.y)
-	const maxY = Math.max(t0.y, t1.y, t2.y)
-	
-	for(let x=minX;x<maxX;x++) {
-		for(let y=minY;y<maxY;y++) {
-			if(!isPointInsideOfTriangle(new Vec2i(x, y), t0, t1, t2)) continue
-			image.set(x, y, color)
-		}
-	}
-}
-
-function triangle(t0, t1, t2, image, color, zBuffer) {
+async function triangle(t0, t1, t2, uv0, uv1, uv2, image, intensity, zBuffer) {
 	t0.toI(); t1.toI(); t2.toI();
 	if(t0.y==t1.y && t0.y == t2.y) return
-	if(t0.y>t1.y) [t0, t1] = [t1, t0];
-	if(t0.y>t2.y) [t0, t2] = [t2, t0];
-	if(t1.y>t2.y) [t1, t2] = [t2, t1];
+	if(t0.y>t1.y) { [t0, t1] = [t1, t0]; [uv0, uv1] = [uv1, uv0]; }
+	if(t0.y>t2.y) { [t0, t2] = [t2, t0]; [uv0, uv2] = [uv2, uv0]; }
+	if(t1.y>t2.y) { [t1, t2] = [t2, t1]; [uv1, uv2] = [uv2, uv1]; }
 	
 	let totalHeight = t2.y - t0.y
 	for(let i=0;i<totalHeight;i++) {
@@ -198,19 +189,28 @@ function triangle(t0, t1, t2, image, color, zBuffer) {
 		let beta = (i - (secondHalf ? t1.y - t0.y : 0))/segmentHeight
 		let A = t0.plus(t2.minus(t0).multiply(alpha)).toI()
 		let B = (secondHalf ? t1.plus(t2.minus(t1).multiply(beta)) : t0.plus(t1.minus(t0).multiply(beta))).toI()
+		let uvA = uv0.plus(uv2.minus(uv0).multiply(alpha))
+		let uvB = (secondHalf ? uv1.plus(uv2.minus(uv1).multiply(beta)) : uv0.plus(uv1.minus(uv0).multiply(beta)))
 		if(A.x > B.x) {
-			[A, B] = [B, A]
+			[A, B] = [B, A];
+			[uvA, uvB] = [uvB, uvA];
 		}
 		for(let j=A.x; j<=B.x; j++) {
 			let phi = B.x === A.x ? 1. : (j-A.x)/(B.x-A.x)
 			let P = A.plus( B.minus(A).multiply(phi) ).toI()
+			let uvP = uvA.plus(uvB.minus(uvA).multiply(phi))
 			const idx = P.y*width + P.x
 			if(zBuffer[idx]<P.z) {
 				zBuffer[idx] = P.z
-				image.set(P.x, P.y, color)
+				let color = model.diffuse(uvP)
+				image.set(P.x, P.y, new TGAColor(color.r*intensity, color.g*intensity, color.b*intensity, 255))
+				//image.set(P.x, P.y, white)
 			}
 		}
 	}
+	return new Promise((resolve)=>{
+		setTimeout(resolve, 1)
+	})
 }
 
 function isPointInsideOfTriangle(targetPoint, p1, p2, p3) {
